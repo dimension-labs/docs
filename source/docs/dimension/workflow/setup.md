@@ -1,0 +1,124 @@
+# Prerequisites
+
+This section explains how to fulfill the prerequisites needed to interact with a Dimension Network.
+
+This section covers:
+
+1.  Installing the official Dimension command-line client
+2.  Setting up an account on a Dimension Network
+3.  Acquiring the IP address of a peer on the official Testnet or Mainnet
+
+## Dimension Command-line Client {#the-dimension-command-line-client}
+
+You can find the default Dimension client on [crates.io](https://crates.io/crates/dimension-client). This client communicates with the network to transmit your deployments.
+
+Run the commands below to install the Dimension client on most flavors of Linux and macOS.
+
+```bash
+cargo install dimension-client
+```
+
+The Dimension client can print out _help_ information, which provides an up-to-date list of supported commands. To do so, use the following command:
+
+```bash
+dimension-client --help
+```
+
+**Important**: For each command, you can use _help_ to get the most up-to-date arguments and descriptions.
+
+```bash
+dimension-client <command> --help
+```
+
+## Building the Client from Source {#building-the-client-from-source}
+
+[Instructions]( https://github.com/dimension-labs/dimension-node/tree/master/client)
+
+## Setting up an Account {#setting-up-an-account}
+
+The [Account](../design/accounts.md) creation process consists of two steps:
+
+1.  Creating the account
+2.  Funding the account
+
+## Creating an Account {#creating-an-account}
+
+The Dimension blockchain uses an on-chain account-based model, uniquely identified by an `AccountHash` derived from a specific `PublicKey`.
+
+By default, a transactional interaction with the blockchain takes the form of a `Deploy` cryptographically signed by the key-pair corresponding to the `PublicKey` used to create the account.
+
+Users can create an account through the Dimension command-line client. Alternatively, some Dimension networks such as the official Testnet and Mainnet provide a browser-based block explorer that allows account creation.
+
+Using the Dimension command-line client or a block explorer to create an account on the blockchain will also create a cryptographic key-pair. This process generates three files for each account:
+
+* A PEM encoded secret key
+* A PEM encoded public key
+* A hexadecimal-encoded string representation of the public key
+
+We recommend saving these files securely.
+
+
+### Option 1: Key generation using the Dimension client {#option-1-key-generation-using-the-dimension-client}
+
+This option describes how you can use the Dimension command-line client to set up your accounts. For more information about cryptographic keys, see [Working with Cryptographic Keys](../dapp-dev-guide/keys.md).
+
+Execute the following command to generate your keys:
+
+```bash
+dimension-client keygen .
+```
+
+The above command will create three files in the current working directory:
+
+1.  `secret_key.pem` - PEM encoded secret key
+2.  `public_key.pem` - PEM encoded public key
+3.  `public_key_hex` - Hexadecimal-encoded string of the public key
+
+**Note**: Save your keys to a safe place, preferably offline.
+
+After generating keys for the account, you may add funds to finish the account creation process.
+
+**Note**: Responses from the node contain `AccountHashes` instead of the direct hexadecimal-encoded public key. To view the account hash for a public key, use the account-address option of the client:
+
+```bash
+dimension-client account-address --public-key <path-to-public_key.pem/public-key-hex>
+```
+
+### Option 2: Key generation using a Block Explorer {#option-2-key-generation-using-a-block-explorer}
+
+This option is available on networks that have a block explorer.
+
+For instance, on the official Testnet network the [DSCC.live](https://testnet.dscc.live/) block explorer is available, and the following instructions assume you are using it.
+
+Start by creating an account using the [Dimension Signer](../workflow/signer-guide.md). You will need to download the keys of your new account by clicking on the `Download Active Key` option in the Dimension Signer menu. Note that the account is not stored on chain.
+
+The system will prompt you to save the following three files for your new account. These are your keys, so we recommend securely storing them:
+
+1.  `secret_key.pem` - PEM encoded secret key
+2.  `public_key.pem` - PEM encoded public key
+3.  `public_key_hex` - Hexadecimal-encoded string of the public key
+
+## Fund your Account {#fund-your-account}
+
+After generating the cryptographic key-pair for the account, you must then fund the account to create it on chain.
+
+In Testnet, you can fund the account by using the **Request tokens** button on the [Faucet Page](https://testnet.dscc.live/tools/faucet) to receive tokens.
+
+In Mainnet, a pre-existing account will have to transfer DSCC tokens to finalize the process of setting up an account. The _Source_ account needs to transfer DSCC tokens to the hexadecimal-encoded public key of the _Target_ account. This transfer will automatically create the _Target_ account if it does not exist. Currently, this is the only way to create an account on Mainnet.
+
+## Acquiring a Node Address from the Network {#acquire-node-address-from-network-peers}
+
+Clients can interact with a node on the blockchain via requests sent to that node's JSON-RPC endpoint, `http://<node-ip-address>:7777` by default.
+
+The node address is the IP of a peer node.
+
+Both the official Testnet and Mainnet provide block explorers that list the IP addresses of nodes on their respective networks.
+
+You can get the `node-ip-address` of a node on the network by visiting the following block explorers:
+
+-   [Peers](https://testnet.dscc.live/tools/peers) on Testnet
+-   [Peers](https://dscc.live/tools/peers) on Mainnet
+
+You will see a list of peers, and you can select the IP of any peer on the list.
+
+**Note**: If the selected peer is unresponsive, pick a different peer and try again.
